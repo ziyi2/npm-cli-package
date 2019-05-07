@@ -1,6 +1,6 @@
 {
   "name": "@ziyi222/npm-cli-package",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NPM命令行工具的发布和使用",
   "main": "index.js",
   "bin": {
