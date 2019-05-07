@@ -1,0 +1,29 @@
+{
+  "name": "@ziyi222/npm-cli-package",
+  "version": "1.0.1",
+  "description": "NPM命令行工具的发布和使用",
+  "main": "index.js",
+  "bin": {
+    "npm-cli-package": "src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziyi2/npm-cli-package.git"
+  },
+  "keywords": [
+    "npm",
+    "cli"
+  ],
+  "author": "ziyi2",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziyi2/npm-cli-package/issues"
+  },
+  "homepage": "https://github.com/ziyi2/npm-cli-package#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

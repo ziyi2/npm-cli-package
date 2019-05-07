@@ -35,7 +35,7 @@ NPM包管理器允许用户将自己编写的包或命令行工具上传到NPM�
 首先新建NPM命令行工具的项目文件，使用`npm init`命令创建`package.json`命令行工具的描述文件，创建后的`package.json`包含**项目名称**、**版本**、**描述**、**项目入口文件**（在发布命令行工具时并不需要`main`字段信息，该信息主要用于发布依赖包而不是命令行工具）、**作者信息**等。执行`npm init`：
 
 ``` javascript
-PS C:\Users\ziyi2\Desktop\npm-demo> npm init
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm init
 This utility will walk you through creating a package.json file.
 It only covers the most common items, and tries to guess sensible defaults.
 
@@ -46,39 +46,43 @@ Use `npm install <pkg>` afterwards to install a package and
 save it as a dependency in the package.json file.
 
 Press ^C at any time to quit.
-package name: (npm-demo)
-version: (1.0.0)
-description: NPM命令行工具示例
-entry point: (index.js)
-test command:
-git repository: 如果关联远程仓库，会自动生成
+package name: (npm-cli-package) 
+version: (1.0.0) 
+description: NPM命令行工具的发布和使用
+entry point: (index.js) 
+test command: 
+git repository: (https://github.com/ziyi2/npm-cli-package.git) 
 keywords: npm cli
 author: ziyi2
-license: (ISC)
-About to write to C:\Users\ziyi2\Desktop\npm-demo\package.json:
+license: (ISC) 
+About to write to /Users/ziyi2/Git/npm-cli-package/package.json:
 
 {
-  "name": "npm-demo",
+  "name": "npm-cli-package",
   "version": "1.0.0",
-  "description": "NPM命令行工具示例",
+  "description": "NPM命令行工具的发布和使用",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "如果关联远程仓库，会自动生成"
+    "url": "git+https://github.com/ziyi2/npm-cli-package.git"
   },
   "keywords": [
     "npm",
     "cli"
   ],
   "author": "ziyi2",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziyi2/npm-cli-package/issues"
+  },
+  "homepage": "https://github.com/ziyi2/npm-cli-package#readme"
 }
 
 
-Is this OK? (yes)
+Is this OK? (yes) 
 ```
 
 
@@ -86,24 +90,29 @@ Is this OK? (yes)
 
 ``` javascript
 {
-  "name": "npm-demo",
+  "name": "npm-cli-package",
   "version": "1.0.0",
-  "description": "NPM命令行工具示例",
+  "description": "NPM命令行工具的发布和使用",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "如果关联远程仓库，会自动生成"
+    "url": "git+https://github.com/ziyi2/npm-cli-package.git"
   },
   "keywords": [
     "npm",
     "cli"
   ],
   "author": "ziyi2",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziyi2/npm-cli-package/issues"
+  },
+  "homepage": "https://github.com/ziyi2/npm-cli-package#readme"
 }
+
 ```
 
 其次NPM命令行工具需要配置在PATH路径下的可执行文件，在`package.json`里配置一个[`bin`](https://www.npmjs.com.cn/files/package.json/#bin)属性（具体查看https://www.npmjs.com.cn/files/package.json/#bin），该属性对应的是可执行文件的路径（当使用`npm link`或者全局安装命令行工具时，NPM会为`bin`中配置的文件在`bin`目录下创建一个软连接，对于Windows系统，默认会在`C:\Users\{username}\AppData\Roaming\npm`目录下，若是局部安装则会在项目的`./node_modules/.bin`目录下创建一个软连接）。
@@ -112,8 +121,8 @@ Is this OK? (yes)
 
 ``` javascript
 "bin": {
-   // npm-demo是一个可执行的命令，该命令指向了`src/index.js`脚本(这里暂时还不清楚该脚本的解释器)
-   "npm-demo": "src/index.js"
+   // npm-cli-package是一个可执行的命令，该命令指向了`src/index.js`脚本(这里暂时还不清楚该脚本的解释器)
+   "npm-cli-package": "src/index.js"
  },
 ```
 
@@ -121,7 +130,7 @@ Is this OK? (yes)
 
 ``` javascript
 #! /usr/bin/env node
-console.info('npm-demo：', '1.0.0')
+console.info('npm-cli-package：', '1.0.0')
 ```
 
 
@@ -131,37 +140,44 @@ console.info('npm-demo：', '1.0.0')
 命令行工具构建完成后，接下来是测试该命令行工具能否被正常使用，此时可以通过`npm link`命令将NPM命令行工具链接到全局执行环境，从而在系统的任意路径下都可以使用该NPM命令行工具。执行`npm link`：
 
 ``` javascript
-PS C:\Users\ziyi2\Desktop\npm-demo> npm link
+// Windows
+PS C:\Users\ziyi2\Desktop\npm-cli-package> npm link
 up to date in 0.428s
-C:\Users\ziyi2\AppData\Roaming\npm\npm-demo -> C:\Users\ziyi2\AppData\Roaming\npm\node_modules\npm-demo\src\index.js
-C:\Users\ziyi2\AppData\Roaming\npm\node_modules\npm-demo -> C:\Users\ziyi2\Desktop\npm-demo
+C:\Users\ziyi2\AppData\Roaming\npm\npm-cli-package -> C:\Users\ziyi2\AppData\Roaming\npm\node_modules\npm-cli-package\src\index.js
+C:\Users\ziyi2\AppData\Roaming\npm\node_modules\npm-cli-package -> C:\Users\ziyi2\Desktop\npm-cli-package
+
+// MAC OS X
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm link
+npm notice created a lockfile as package-lock.json. You should commit this file.
+up to date in 4.113s
+found 0 vulnerabilities
+
+/usr/local/bin/npm-cli-package -> /usr/local/lib/node_modules/npm-cli-package/src/index.js
+/usr/local/lib/node_modules/npm-cli-package -> /Users/ziyi2/Git/npm-cli-package
 ```
 
 
-当执行`npm link`后，可以看到在Windows系统下该命令主要做了两件事：
+当执行`npm link`后，可以看到在Mac系统下该命令主要做了两件事：
 
-- 为NPM命令行工具的可执行文件（`package.json`文件的`bin`属性所配置的可执行文件目录`src/index.js`）创建一个软链接，将其链接到`C:\Users\{username}\AppData\Roaming\npm\<package>`
-- 为NPM命令行工具所在代码目录(项目的具体路径，例如在以上示例中放在了用户桌面的`npm-demo`文件目录中)创建一个软链接，将其链接到`C:\Users\{username}\AppData\Roaming\npm\node_modules\{package}`
+- 为NPM命令行工具的可执行文件（`package.json`文件的`bin`属性所配置的可执行文件目录`src/index.js`）创建一个软链接，将其链接到`/usr/local/bin/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\<package>`）
+- 为NPM命令行工具所在代码目录(项目的具体路径，例如在以上示例中放在了用户桌面的`npm-cli-package`文件目录中)创建一个软链接，将其链接到`/usr/local/lib/node_modules/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\node_modules\<package>`)
 
 
-因此在全局环境执行`<name>`命令时（`pageage.json`中的`name`字段，默认如果`bin`不配置执行的命令名称时，使用`name`字段作为命令，这里演示中将执行的命令名称配置成了`npm-demo`），会启用Node去执行`package.json`中`bin`字段对应的可执行文件，此时可在任意位置执行`npm-demo`命令：
+因此在全局环境执行`<name>`命令时（`pageage.json`中的`name`字段，默认如果`bin`不配置执行的命令名称时，使用`name`字段作为命令，这里演示中将执行的命令名称配置成了`npm-cli-package`），会启用Node去执行`package.json`中`bin`字段对应的可执行文件，此时可在任意位置执行`npm-cli-package`命令：
 
 ``` javascript
-PS C:\Users\ziyi2\Desktop> npm-demo
-npm-demo： 1.0.0
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm-cli-package
+npm-cli-package： 1.0.0
 ```
 
-可以发现在当前项目外的任意路径都可以使用该命令成功打印信息，说明Node解释器和软链接都设置成功。此时你也可以到用户目录`C:\Users\{username}\AppData\Roaming\npm\node_modules`下查看`npm-demo`包的软链接，并且可以在`C:\Users\{username}\AppData\Roaming\npm`中找到`npm-demo`(Shell)和`npm-demo.cmd`(Cmd)两个可执行文件。
+可以发现在当前项目外的任意路径都可以使用该命令成功打印信息，说明Node解释器和软链接都设置成功。Windows系统你可以到用户目录`C:\Users\{username}\AppData\Roaming\npm\node_modules`下查看`npm-cli-package`包的软链接，并且可以在`C:\Users\{username}\AppData\Roaming\npm`中找到`npm-cli-package`(Shell)和`npm-cli-package.cmd`(Cmd)两个可执行文件。
 
 
 在真正设计CLI工具时，你可能需要一些额外功能的依赖，例如：
 
-| 依赖名称 |     描述 |   
-| :-------- | :--------| 
-| commander |   一个帮助快速开发Node.js命令行工具的依赖 | 
-| chalk |   终端打印信息的颜色工具 | 
-| babel-register|   对Node.js环境中require命令加载的文件进行babel转码 | 
-
+- [commander.js](https://github.com/tj/commander.js) - node.js command-line interfaces made easy
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+- [@babel/register](https://babeljs.io/docs/en/babel-register/) - 对Node.js环境中require命令加载的文件进行babel转码
 
 
 ### NPM命令行工具发布
@@ -169,13 +185,11 @@ npm-demo： 1.0.0
 通过`npm link`以及命令行的使用测试，发现命令行工具没有任何问题，此时想将该工具分享给他人使用，可以利用NPM包管理器的发布机制。在发布命令行工具之前，需要在[NPM官网](https://www.npmjs.com)注册账号，注册成功后，需要在命令终端中使用`npm login`链接你注册的账号（`npm login`会将账号登录的证书信息保存在本地电脑，从而不需要再次登录账号），同时会在npm的网站中生成你当前登录的token信息，登录后可以通过`npm whoami`命令查看当前登录账号名。需要注意登录的时候不要使用NPM淘宝镜像地址，需要使用NPM官方地址，可以通过`npm config set registry https://registry.npmjs.org/`命令设置成NPM官方的包发布地址。。
 
 ``` javascript
-PS C:\Users\ziyi2\Desktop> npm login
-Username: ziyi2
-Password:
-Email: (this IS public) 115840480@qq.com
-Logged in as ziyi2 on https://registry.npmjs.org/.
-PS C:\Users\ziyi2\Desktop> npm whoami
-ziyi2
+AppledeMacBook-Pro:~ ziyi2$ npm login
+Username: ziyi222
+Password: 
+Email: (this IS public) 673191402@qq.com
+Logged in as ziyi222 on https://registry.npmjs.org/.
 ```
 
 
@@ -187,51 +201,101 @@ ziyi2
 
 
 
-使用`npm publish`命令发布命令行工具（因为这里已经有人发布了`npm-demo`的包名称，因此采用`npm-demo-ziyi2`包名）:
+使用`npm publish`命令发布命令行工具:
 
 ``` javascript
-PS C:\Users\ziyi2\Desktop\npm-demo> npm publish
-npm notice
-npm notice package: npm-demo-ziyi2@1.0.0
-npm notice === Tarball Contents ===
-npm notice 428B package.json
-npm notice 58B  src/index.js
-npm notice === Tarball Details ===
-npm notice name:          npm-demo-ziyi2
-npm notice version:       1.0.0
-npm notice package size:  468 B
-npm notice unpacked size: 486 B
-npm notice shasum:        5ea45fcf9aa1868f992314148306abc710bd6d96
-npm notice integrity:     sha512-f1rziU3iaglgM[...]aZfAs314u9s7g==
-npm notice total files:   2
-npm notice
-+ npm-demo-ziyi2@1.0.0
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm-cli-package
+npm-cli-package： 1.0.0
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm publish
+npm notice 
+npm notice 📦  npm-cli-package@1.0.0
+npm notice === Tarball Contents === 
+npm notice 595B   package.json
+npm notice 12.1kB README.md   
+npm notice 64B    src/index.js
+npm notice === Tarball Details === 
+npm notice name:          npm-cli-package                         
+npm notice version:       1.0.0                                   
+npm notice package size:  5.1 kB                                  
+npm notice unpacked size: 12.8 kB                                 
+npm notice shasum:        624e3e45667da53d474418907d3250336b56208b
+npm notice integrity:     sha512-b77RbfmmF+Gjf[...]MSbp9PL4UUE9w==
+npm notice total files:   3                                       
+npm notice 
++ npm-cli-package@1.0.0
 ```
 
 
 此时可以查看NPM官网中的个人账号信息，可以发现发布了该命令行工具的`1.0.0`版本。
 
+如果需要发布Scope包，需要在NPM官网中创建一个组织（例如这里将ziyi222的账号作为组织，然后将账号ziyi222重命名成ziyi222222，并重新登录账号）：
+
+``` javascript
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm login
+Username: ziyi222222
+Password: 
+Email: (this IS public) 673191402@qq.com
+Logged in as ziyi222222 on https://registry.npmjs.org/.
+```
+
+重新修改`package.json`配置文件：
+
+``` javascript
+{
+  "name": "@ziyi222/npm-cli-package",
+  // ...
+  "publishConfig": {
+    "access": "public"
+  }
+}
+
+```
+
+使用`npm publish`发布：
+
+``` javascript
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm publish
+npm notice 
+npm notice 📦  @ziyi222/npm-cli-package@1.0.1
+npm notice === Tarball Contents === 
+npm notice 653B   package.json
+npm notice 12.1kB README.md   
+npm notice === Tarball Details === 
+npm notice name:          @ziyi222/npm-cli-package                
+npm notice version:       1.0.1                                   
+npm notice package size:  5.1 kB                                  
+npm notice unpacked size: 12.8 kB                                 
+npm notice shasum:        fac560a42c43d276c9fee17c21887bedaf34bad1
+npm notice integrity:     sha512-j/QScEgX+glfS[...]OxhhZcIavUhfg==
+npm notice total files:   2                                       
+npm notice 
++ @ziyi222/npm-cli-package@1.0.1
+```
+
 
 
 ### 命令行工具下载安装
 
-包的发布，主要是为了解决2中所描述的各种问题。所有开发者可以通过使用npm install  –g对   进行全局安装（演示的demo也可以通过npm install npm-demo-ziyi2 –g进行全局安装），如图4-11和4-12所示。
+开发者可以通过`npm install`  命令对命令行工具进行全局安装：
 
-图12 安装成功信息
+``` javascript
+AppledeMacBook-Pro:npm-cli-package ziyi2$ npm install npm-cli-package -g
+/usr/local/bin/npm-cli-package -> /usr/local/lib/node_modules/npm-cli-package/src/index.js
++ npm-cli-package@1.0.0
+updated 1 package in 12.977s
+```
 
-由图4-11和4-12中的安装打印信息可以发现，最终命令行工具的软链接指向了C:users\{username}\AppData\Roaming\npm\node_modules\<pageage>下的可执行脚步文件。
+由安装打印信息可以发现，最终命令行工具脚本链接指向了`/usr/local/bin/npm-cli-package`。
 
 
 ### 命令行工具的使用
 
-命令行工具包安装成功之后，可以在项目中使用指定的命令行工具，如图4-13所示是
-
-图13 命令执行
+命令行工具包安装成功之后，可以在项目中使用指定的命令行工具。
 
 
 ### 总结
 
-命令行工具如果有功能需要扩展，可以再次通过npm publish命令发布新版本的NPM包，此时其他开发者通过npm install全局安装的形式更新新发布版本的包，因此使用发布NPM包的形式可以使命令工具的版本升级和维护更方便。
+命令行工具如果有功能需要扩展，可以再次通过`npm publish`命令发布新版本的NPM包，此时其他开发者通过`npm install`全局安装的形式更新新发布版本的包，因此使用发布NPM包的形式可以使命令工具的版本升级和维护更方便。
 
 ### 参考文献
 
