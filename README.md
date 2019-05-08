@@ -14,22 +14,22 @@
 
 ## NPM包管理器
 
-NPM包管理器允许用户将自己编写的包或命令行工具上传到NPM服务器供别人使用，开发人员只需要从NPM服务器下载并安装该命令行工具到本地即可使用。同时命令行工具可以通过更新NPM服务器上的命令行程序版本进行远程升级，开发人员可以再次通过NPM服务器更新命令行工具的版本进行工具升级。
+NPM包管理器允许用户将自己编写的包或命令行工具上传到NPM服务器，开发人员只需要从NPM服务器下载并安装该命令行工具到本地即可使用。命令行工具可以通过更新NPM服务器上的命令行程序版本进行远程升级，开发人员可以再次通过NPM服务器更新命令行工具的版本进行工具升级。
 
-发布的命令行工具可以实现本地项目依赖安装和全局安装两种方式。采用本地项目依赖安装会将发布的命令行工具加入开发态依赖列表，这不能解决项目依赖增加的问题，如果需要解决该问题，可以采用全局方式安装，从而将NPM命令行工具的命令链接到全局执行环境（此时Node脚本不会植入到项目中，而是存放在操作系统的用户文件夹中），实现工具命令的全局使用。
+发布的命令行工具可以实现本地项目依赖安装和全局安装两种方式。采用本地项目依赖安装会将发布的命令行工具加入到项目的开发态依赖列表，这不能解决项目依赖增加的问题，如果需要解决该问题，可以采用全局方式安装，从而将NPM命令行工具的命令链接到全局执行环境（此时Node脚本不会植入到项目中，而是存放在操作系统的用户文件夹中），实现命令行工具的全局使用。
 
 这里列举几个常见的命令行工具：
 
 - [npm/cli](https://github.com/npm/cli)
+- [@babel/cli](https://babeljs.io/docs/en/next/babel-cli.html)
 - [vuejs/vue-cli](https://github.com/vuejs/vue-cli) 
 - [commitizen/cz-cli](https://github.com/commitizen/cz-cli) 
-- [@babel/cli](https://babeljs.io/docs/en/next/babel-cli.html)
 
 
-## 发布和使用命令行工具
+## 构建、发布和使用命令行工具
 
 
-### 命令行工具构建
+### 构建命令行工具
 
 
 首先新建NPM命令行工具的项目文件，使用`npm init`命令创建`package.json`命令行工具的描述文件，创建后的`package.json`包含**项目名称**、**版本**、**描述**、**项目入口文件**（在发布命令行工具时并不需要`main`字段信息，该信息主要用于发布依赖包而不是命令行工具）、**作者信息**等。执行`npm init`：
@@ -115,7 +115,7 @@ Is this OK? (yes)
 
 ```
 
-其次NPM命令行工具需要配置在PATH路径下的可执行文件，在`package.json`里配置一个[`bin`](https://www.npmjs.com.cn/files/package.json/#bin)属性（具体查看https://www.npmjs.com.cn/files/package.json/#bin），该属性对应的是可执行文件的路径（当使用`npm link`或者全局安装命令行工具时，NPM会为`bin`中配置的文件在`bin`目录下创建一个软连接，对于Windows系统，默认会在`C:\Users\{username}\AppData\Roaming\npm`目录下，若是局部安装则会在项目的`./node_modules/.bin`目录下创建一个软连接）。
+其次NPM命令行工具需要配置在PATH路径下的可执行文件，在`package.json`里配置一个[`bin`](https://www.npmjs.com.cn/files/package.json/#bin)属性，该属性对应的是可执行文件的路径（当使用`npm link`或者全局安装命令行工具时，NPM会为`bin`中配置的文件在`bin`目录下创建一个软连接，对于Windows系统，默认会在`C:\Users\{username}\AppData\Roaming\npm`目录下，若是局部安装则会在项目的`./node_modules/.bin`目录下创建一个软连接）。
 
 例如将`bin`对应的可执行文件路径配置为当前项目下的`src/index.js`:
 
@@ -126,7 +126,7 @@ Is this OK? (yes)
  },
 ```
 
-配置`bin`属性的模块路径后，可以开始设计可执行文件。为了使入口文件使用Node作为解释程序，需要在入口文件的头部写入`#! /usr/bin/env node`，目的是使用env来寻找Node，并将Node作为程序的解释器（在env中包含了一些环境变量，包括我们安装的一些环境的路径等。在不同的操作系统中，我们安装Node的路径可能会有所不同，但是其环境变量会存在于env中，这里我们使用env来找到Node的执行路径。所以，env的主要目的就是让我们的脚本在不同的操作系统上都能够正常的被解释和启动）。例如在`src/index.js`入口文件写入一个打印信息的Node脚本：
+配置`bin`属性的模块路径后，可以开始设计可执行文件。为了使入口文件使用Node作为解释程序，需要在入口文件的头部写入`#! /usr/bin/env node`，目的是使用env来寻找操作系统中的Node启动路径，并将Node作为程序的解释器（在env中包含了一些环境变量，包括我们安装的一些环境的路径等。在不同的操作系统中，我们安装Node的路径可能会有所不同，但是其环境变量会存在于env中，这里我们使用env来找到Node的执行路径。因此env的主要目的就是让我们的脚本在不同的操作系统上都能够正常的被解释和执行）。例如在`src/index.js`入口文件写入一个打印信息的Node脚本：
 
 ``` javascript
 #! /usr/bin/env node
@@ -159,8 +159,8 @@ found 0 vulnerabilities
 
 当执行`npm link`后，可以看到在Mac系统下该命令主要做了两件事：
 
-- 为NPM命令行工具的可执行文件（`package.json`文件的`bin`属性所配置的可执行文件目录`src/index.js`）创建一个软链接，将其链接到`/usr/local/bin/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\<package>`）
-- 为NPM命令行工具所在代码目录(项目的具体路径，例如在以上示例中放在了用户桌面的`npm-cli-package`文件目录中)创建一个软链接，将其链接到`/usr/local/lib/node_modules/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\node_modules\<package>`)
+- 为NPM命令行工具的可执行文件（`package.json`文件的`bin`属性所配置的可执行文件`src/index.js`）创建一个软链接，将其链接到`/usr/local/bin/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\<package>`）
+- 为NPM命令行工具所在项目路径(项目的具体路径，例如在以上示例中放在了`/Users/ziyi2/Git`的`npm-cli-package`文件目录中)创建一个软链接，将其链接到`/usr/local/lib/node_modules/<package>`（Windows下是`C:\Users\{username}\AppData\Roaming\npm\node_modules\<package>`)
 
 
 因此在全局环境执行`<name>`命令时（`pageage.json`中的`name`字段，默认如果`bin`不配置执行的命令名称时，使用`name`字段作为命令，这里演示中将执行的命令名称配置成了`npm-cli-package`），会启用Node去执行`package.json`中`bin`字段对应的可执行文件，此时可在任意位置执行`npm-cli-package`命令：
@@ -170,7 +170,7 @@ AppledeMacBook-Pro:npm-cli-package ziyi2$ npm-cli-package
 npm-cli-package： 1.0.0
 ```
 
-可以发现在当前项目外的任意路径都可以使用该命令成功打印信息，说明Node解释器和软链接都设置成功。Windows系统你可以到用户目录`C:\Users\{username}\AppData\Roaming\npm\node_modules`下查看`npm-cli-package`包的软链接，并且可以在`C:\Users\{username}\AppData\Roaming\npm`中找到`npm-cli-package`(Shell)和`npm-cli-package.cmd`(Cmd)两个可执行文件。
+可以发现在当前项目外的任意路径都可以使用该命令成功打印信息，说明Node解释器和软链接都设置成功。Windows系统可以到用户目录`C:\Users\{username}\AppData\Roaming\npm\node_modules`下查看`npm-cli-package`包的软链接，并且可以在`C:\Users\{username}\AppData\Roaming\npm`中找到`npm-cli-package`(Shell)和`npm-cli-package.cmd`(Cmd)两个可执行文件。
 
 
 在真正设计CLI工具时，你可能需要一些额外功能的依赖，例如：
@@ -180,9 +180,9 @@ npm-cli-package： 1.0.0
 - [@babel/register](https://babeljs.io/docs/en/babel-register/) - 对Node.js环境中require命令加载的文件进行babel转码
 
 
-### NPM命令行工具发布
+### 发布NPM命令行工具
 
-通过`npm link`以及命令行的使用测试，发现命令行工具没有任何问题，此时想将该工具分享给他人使用，可以利用NPM包管理器的发布机制。在发布命令行工具之前，需要在[NPM官网](https://www.npmjs.com)注册账号，注册成功后，需要在命令终端中使用`npm login`链接你注册的账号（`npm login`会将账号登录的证书信息保存在本地电脑，从而不需要再次登录账号），同时会在npm的网站中生成你当前登录的token信息，登录后可以通过`npm whoami`命令查看当前登录账号名。需要注意登录的时候不要使用NPM淘宝镜像地址，需要使用NPM官方地址，可以通过`npm config set registry https://registry.npmjs.org/`命令设置成NPM官方的包发布地址。。
+通过`npm link`以及命令行的使用测试，发现命令行工具没有任何问题，此时想将该工具分享给他人使用，可以利用NPM包管理器的发布机制。在发布命令行工具之前，需要在[NPM官网](https://www.npmjs.com)注册账号（需要设置邮箱并进行邮箱），注册成功后，在命令终端中使用`npm login`链接你注册的账号（`npm login`会将账号登录的证书信息保存在本地电脑，从而不需要再次登录账号），同时会在npm的网站中生成你当前登录的token信息，登录后可以通过`npm whoami`命令查看当前登录账号名。注意登录的时候不要使用NPM淘宝镜像地址，需要使用NPM官方地址，可以通过`npm config set registry https://registry.npmjs.org/`命令设置成NPM官方的包发布地址。。
 
 ``` javascript
 AppledeMacBook-Pro:~ ziyi2$ npm login
@@ -226,9 +226,9 @@ npm notice
 ```
 
 
-此时可以查看NPM官网中的个人账号信息，可以发现发布了该命令行工具的`1.0.0`版本。
+此时查看NPM官网中的个人账号信息，可以发现发布了该命令行工具的`1.0.0`版本。
 
-如果需要发布Scope包，需要在NPM官网中创建一个组织（例如这里将ziyi222的账号作为组织，然后将账号ziyi222重命名成ziyi222222，并重新登录账号）：
+如果需要发布[Scope包](https://docs.npmjs.com/creating-and-publishing-scoped-public-packages)，需要在NPM官网中创建一个组织（例如这里将ziyi222的账号作为组织，然后将账号ziyi222重命名成ziyi222222，并重新登录账号）：
 
 ``` javascript
 AppledeMacBook-Pro:npm-cli-package ziyi2$ npm login
@@ -274,7 +274,7 @@ npm notice
 
 
 
-### 命令行工具下载安装
+### 命令行工具下载安装和使用
 
 开发者可以通过`npm install`  命令对命令行工具进行全局安装：
 
@@ -285,17 +285,12 @@ AppledeMacBook-Pro:npm-cli-package ziyi2$ npm install npm-cli-package -g
 updated 1 package in 12.977s
 ```
 
-由安装打印信息可以发现，最终命令行工具脚本链接指向了`/usr/local/bin/npm-cli-package`。
-
-
-### 命令行工具的使用
-
-命令行工具包安装成功之后，可以在项目中使用指定的命令行工具。
+由安装打印信息可以发现，最终命令行工具脚本链接指向了`/usr/local/bin/npm-cli-package`。安装成功之后，可以在项目中使用命令行工具指定的命令。
 
 
 ### 总结
 
-命令行工具如果有功能需要扩展，可以再次通过`npm publish`命令发布新版本的NPM包，此时其他开发者通过`npm install`全局安装的形式更新新发布版本的包，因此使用发布NPM包的形式可以使命令工具的版本升级和维护更方便。
+命令行工具如果有功能需要扩展，可以再次通过`npm publish`命令发布新版本的NPM包，此时其他开发者可以通过`npm install`全局安装的形式进行工具升级，因此使用发布NPM包的形式可以使命令工具的版本升级和维护更方便。
 
 ### 参考文献
 
